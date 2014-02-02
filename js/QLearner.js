@@ -41,16 +41,17 @@
 
     function argmaxQ_a(s){
         var a, r;
-        var max = -Infinity;
+        var maxr = -Infinity;
         var argmax = 0;
         for(var name in actions){
             r = Q.get(s, actions[name])
-            if(max < r){
-                max = r;
+            console.log('r', r);
+            if(maxr < r){
+                maxr = r;
                 argmax = actions[name];
             }
         }
-        return argmax;
+        return {reward: maxr, action: argmax};
     }
 
 
@@ -81,6 +82,9 @@
         getQ: function(){
             return Q.data;
         },
+        randomState: function(){
+            this.state = randomState(this.N);
+        },
         reset: function(){
             this.state = randomState(this.N);
             Q.reset();
@@ -94,17 +98,19 @@
             var self = this;
 
             if(options.episodes <= 0){
-                console.log("!!!!!!!!!!!!!!!! DONE !!!!!!!!!!!!!!!!!!");
+                options.whenDone && options.whenDone();
                 return;
             }
             options.episodes -= 1;
 
             if(!active){
-                _whenDone = options.whenDone;
-                options.whenDone = function(){
+                _eachEpisode = options.eachEpisode;
+                options.eachEpisode = function(){
                     console.log("END ", options.episodes, 'episode');
-                    self.runEpisodes(options, true);
-                    _whenDone && _whenDone();
+                    _eachEpisode && _eachEpisode();
+                    setTimeout(function(){
+                        self.runEpisodes(options, true);
+                    }, self.episodeDelay || 1000)
                 };
             }
             self.runEpisode(options);
@@ -113,6 +119,7 @@
             // new random state if episode newly started
             if(!active){
                 this.state = randomState(this.N);
+                this.stepDelay = options.delay || this.stepDelay || 10;
             }
             var self = this;
             var success = false;
@@ -124,23 +131,32 @@
                     options.eachStep && options.eachStep();
                     self.runEpisode(options, true);
                 } else {
-                    options.whenDone && options.whenDone();
+                    options.eachEpisode && options.eachEpisode();
                 }
-            }, options.delay || 10);
+            }, this.stepDelay || 10);
         },
         step: function(){
 
             var nextState;
             this.prevState = this.state;
             var maxQValue = 0;
+            var argmax;
 
             var takeGreedyAction = (Math.random() <= this.epsilon);
 
             if(this.greedy){
                 // e-Greedy action; e = 0
                 // at = arg maxaQ (st , a)
-                this.action = argmaxQ_a(this.state);
-            } else {
+                argmax = argmaxQ_a(this.state);
+                if(argmax.reward === 0){
+                    // pass !
+                    console.log("No best greedy action ==> exploring");
+                } else {
+                    this.action = argmax.action;
+                }
+            }
+
+            if(!this.greedy || argmax.reward === 0){
                 // Exlploration:
                 // select one among all possible actions for the current state
                 this.action = randomAction();

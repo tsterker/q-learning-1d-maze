@@ -64,13 +64,49 @@
         </script>
 
         <div id="content">
-            <h1>TODO: use probabilities to choose action</h1>
+            <h1>TODO: make transition from epsilon=1 to epsilon=0</h1>
             <canvas id="canvas" width="800" height="300"></canvas>
             <br>
-            <button id="reset" onclick="learner.reset(); update();">reset</button>
-            <button id="step" onclick="learner.step(); update();">step</button>
-            <button id="run" onclick="runQLearnerExploration();">run (explore)</button>
-            <button id="run" onclick="runQLearnerGreedy();">run (exploit)</button>
+
+            Gamma: <input type="number" id="gamma" min="0" max="1" step="0.01" value="0.85" style="width: 4em; text-align: center;" onchange="learner.gamma = +this.value" />
+            <br>
+            Episodes per run: <input type="number" id="episodes-per-run" min="1" value="5" style="width: 3em; text-align: center;" />
+            <br>
+            <button id="reset" onclick="resetLearner();">reset</button>
+            <br>
+            <table>
+                <tr>
+                    <td><b>Explore:</b></td>
+                    <td>
+                        <button id="step-explore" onclick="runQLearnerStepExploration();">step</button>
+                    </td>
+                    <td>
+                        <button id="run-explore" onclick="runQLearnerExploration();">run</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Exploit:</b></td>
+                    <td>
+                        <button id="step-exploit" onclick="runQLearnerStepExploitation();">step</button>
+                    </td>
+                    <td>
+                        <button id="run-exploit" onclick="runQLearnerGreedy();">run</button>
+                    </td>
+                </tr>
+            </table>
+            <!--<br>-->
+            <!--Total Episodes: <b id="total-episodes">0</b>-->
+            <br>
+            <br>
+            Delay: <b id="delay-current">?</b>
+            (
+            <b id="delay-from">10</b>
+            <input type="range" name="delay" value="500" min="10" max="1000" step="10" id="delay" onchange="document.getElementById('delay-current').innerHTML = this.value; setDelay(+this.value)">
+            <b id="delay-to">1000</b>
+            )
+            
+
+            <br>
             <!--<button id="run-NxN" onclick="runQLearner();">run N^2</button>-->
             <br>
             <br>
