@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <style>
+            #content{
+                margin: auto;
+                margin-top: 10%;
+                padding: 50px;
+                border: dashed 2px royalblue;
+                border-radius: 10px;
+                width: 800px;
+            }
+            #debug{
+                border: solid 1px gray;
+                background-color: whitesmoke;
+                padding: 5px;
+                font-family: monospace;
+            }
+
+        </style>
+    </head>
+    <body>
+        <script type="template" id="q-table">
+            <% var decimalPlaces = 4 %>
+            <table style="padding: 5px;">
+                <tr style="padding: 5px;">
+                    <td></td>
+                    <td>left</td>
+                    <td>right</td>
+                </tr>
+            <% for(var i = 1; i <= N; i++) { %>
+                <tr>
+                    <td style="padding: 5px;"><%= i %></td>
+                    <td style="padding: 5px;"><%= (Q[[i, -1]] || 0).toFixed(decimalPlaces) %></td>
+                    <td style="padding: 5px;"><%= (Q[[i, +1]] || 0).toFixed(decimalPlaces) %></td>
+                </tr>
+            <% } %>
+            </table>
+        </script>
+
+        <div id="content">
+            <h1>TODO: use probabilities to choose action</h1>
+            <canvas id="canvas" width="800" height="300"></canvas>
+            <br>
+            <button id="reset" onclick="learner.reset(); update();">reset</button>
+            <button id="step" onclick="learner.step(); update();">step</button>
+            <button id="run" onclick="runQLearnerExploration();">run (explore)</button>
+            <button id="run" onclick="runQLearnerGreedy();">run (exploit)</button>
+            <!--<button id="run-NxN" onclick="runQLearner();">run N^2</button>-->
+            <br>
+            <br>
+            <b>Q-Function:</b>
+            <div id="debug">
+                hey
+            </div>
+        </div>
+
+        <script src="js/vendor/underscore.js"></script>
+        <script src="js/QLearner.js"></script>
+        <script src="js/main.js"></script>
+    </body>
+</html>
