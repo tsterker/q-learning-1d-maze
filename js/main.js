@@ -122,7 +122,7 @@ function runQLearner(times) {
 // ==================================================
 
 var learner = LearnTool.QLearner;
-learner.N = 20;
+learner.N = 10;
 learner.gamma = 0.8;
 
 // Visualization

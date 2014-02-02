@@ -1,0 +1,6 @@
+
+# ignore vim tmp files
+*~
+
+# ignore vim swap files
+*.sw?

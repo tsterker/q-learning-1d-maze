@@ -135,13 +135,11 @@
             var maxQValue = 0;
 
             var takeGreedyAction = (Math.random() <= this.epsilon);
-            console.log(takeGreedyAction);
 
             if(this.greedy){
                 // e-Greedy action; e = 0
                 // at = arg maxaQ (st , a)
                 this.action = argmaxQ_a(this.state);
-                console.log(this.action);
             } else {
                 // Exlploration:
                 // select one among all possible actions for the current state
