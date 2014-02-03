@@ -15,6 +15,7 @@
 
     var Q = {
         data: {},
+        initialization: 0,
         reset: function(){
             this.data = {};
         },
@@ -23,7 +24,7 @@
         },
         get: function(s, a){
             var value = this.data[[s, a]];
-            return value? value : 0;
+            return isNaN(value)? this.initialization : value;
         }
     };
 
@@ -75,6 +76,8 @@
         state: undefined,
         action: undefined,
         greedyActionTaken: false,
+        episodeDelay: 1000,
+
 
         showQ: function(){
             console.log(Q.data);
@@ -110,7 +113,7 @@
                     _eachEpisode && _eachEpisode();
                     setTimeout(function(){
                         self.runEpisodes(options, true);
-                    }, self.episodeDelay || 1000)
+                    }, self.episodeDelay)
                 };
             }
             self.runEpisode(options);
@@ -118,7 +121,7 @@
         runEpisode: function(options, active){
             // new random state if episode newly started
             if(!active){
-                this.state = randomState(this.N);
+                //this.state = randomState(this.N);
                 this.stepDelay = options.delay || this.stepDelay || 10;
             }
             var self = this;

@@ -159,6 +159,10 @@ function setStepButtons(enable){
         learner.greedyActionTaken = false;
     }
 }
+function setNumberOfStates(numStates){
+    learner.N = numStates;
+    resetLearner();
+}
 
 function runQLearnerStepExploration(times) {
     learner.epsilon = 1;
@@ -223,6 +227,7 @@ function runQLearnerGreedy(times) {
 
 function runQLearner(times) {
     //learner.runEpisode(times || learner.N * learner.N, function(){
+    setStepButtons(false);
     learner.runEpisodes({
         episodes: +document.getElementById('episodes-per-run').value || 5,
         //delay: 200,
@@ -237,10 +242,16 @@ function runQLearner(times) {
             console.log('[ ===== GOAL ===== ]');
             total_episodes++;
             update();
+            setStepButtons(false);      // basically: reset prevState and greedyActionTaken
+            setTimeout(function(){
+                learner.randomState();
+                update();
+            }, learner.episodeDelay/2);
         },
         whenDone: function(){
             console.log("!!!!!!!!!!!!!!!! DONE !!!!!!!!!!!!!!!!!!");
             update();
+            setStepButtons(true);
         }
     });
     update();
