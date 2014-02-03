@@ -76,7 +76,7 @@
             <br>
             <table>
                 <tr>
-                    <td><b>Explore:</b></td>
+                    <td><b>Explore:</b> (&#949; = 0)</td>
                     <td>
                         <button id="step-explore" onclick="runQLearnerStepExploration();">step</button>
                     </td>
@@ -85,12 +85,23 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><b>Exploit:</b></td>
+                    <td><b>Exploit:</b>(&#949; = 1)</td>
                     <td>
                         <button id="step-exploit" onclick="runQLearnerStepExploitation();">step</button>
                     </td>
                     <td>
                         <button id="run-exploit" onclick="runQLearnerGreedy();">run</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>&#949;-greedy:</b>
+                        (&#949; =  <input type="number" id="epsilon" min="0" value="0.5" max="1" step="0.1" style="width: 3em; text-align: center;" />)
+                    </td>
+                    <td>
+                        <button id="e-step" onclick="runQLearnerStepEpsilon();">step</button>
+                    </td>
+                    <td>
+                        <button id="e-run" onclick="runQLearnerEpsilon();">run</button>
                     </td>
                 </tr>
             </table>

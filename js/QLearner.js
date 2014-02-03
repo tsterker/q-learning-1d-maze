@@ -45,7 +45,6 @@
         var argmax = 0;
         for(var name in actions){
             r = Q.get(s, actions[name])
-            console.log('r', r);
             if(maxr < r){
                 maxr = r;
                 argmax = actions[name];
@@ -75,6 +74,7 @@
         epsilon: 1,
         state: undefined,
         action: undefined,
+        greedyActionTaken: false,
 
         showQ: function(){
             console.log(Q.data);
@@ -142,9 +142,10 @@
             var maxQValue = 0;
             var argmax;
 
-            var takeGreedyAction = (Math.random() <= this.epsilon);
+            this.greedyActionTaken = false;
+            var takeGreedyAction = (Math.random() <= (1-this.epsilon));
 
-            if(this.greedy){
+            if(takeGreedyAction){
                 // e-Greedy action; e = 0
                 // at = arg maxaQ (st , a)
                 argmax = argmaxQ_a(this.state);
@@ -152,11 +153,13 @@
                     // pass !
                     console.log("No best greedy action ==> exploring");
                 } else {
+                    console.log('...taking greedy action...')
+                    this.greedyActionTaken = true;
                     this.action = argmax.action;
                 }
             }
 
-            if(!this.greedy || argmax.reward === 0){
+            if(!takeGreedyAction || argmax.reward === 0){
                 // Exlploration:
                 // select one among all possible actions for the current state
                 this.action = randomAction();

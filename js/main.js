@@ -23,7 +23,11 @@ function drawStates(c, N, currentState, goalState){
         c.fillStyle = 'transparent';
         c.lineWidth = 1;
         if(i === currentState){
-            c.fillStyle = 'green';
+            if(learner.greedyActionTaken){
+                c.fillStyle = 'yellow';
+            } else {
+                c.fillStyle = 'green';
+            }
             if(currentState === goalState){
                 //c.fillStyle = 'red';
                 c.strokeStyle = 'red';
@@ -40,6 +44,41 @@ function drawStates(c, N, currentState, goalState){
 
         c.fillRect(x, y, stateSize, stateSize);
         c.strokeRect(x, y, stateSize, stateSize);
+
+        if(i === currentState){
+            c.fillStyle = 'gray';
+            y = y+stateSize/4;
+            var arrWidth = stateSize/2;
+            var arrX;
+            if(learner.state > learner.prevState){
+                arrX = x-stateSize+stateDist/3+3*arrWidth/4;
+                c.beginPath();
+                c.moveTo(arrX, y);
+
+                c.lineTo(arrX+arrWidth/2, y+arrWidth/2);
+                c.lineTo(arrX, y+arrWidth);
+
+                c.lineTo(arrX, y+3*arrWidth/4);
+                c.lineTo(arrX-arrWidth, y+3*arrWidth/4);
+                c.lineTo(arrX-arrWidth, y+arrWidth/4);
+                c.lineTo(arrX, y+arrWidth/4);
+                c.fill();
+
+            } else if(learner.state < learner.prevState){
+                arrX = x+stateSize+stateDist/3;
+                c.beginPath();
+                c.moveTo(arrX, y);
+                c.lineTo(arrX-arrWidth/2, y+arrWidth/2);
+                c.lineTo(arrX, y+arrWidth);
+
+                c.lineTo(arrX, y+3*arrWidth/4);
+                c.lineTo(arrX+arrWidth, y+3*arrWidth/4);
+                c.lineTo(arrX+arrWidth, y+arrWidth/4);
+                c.lineTo(arrX, y+arrWidth/4);
+                c.fill();
+            }
+        }
+
 
 //        if(i === currentState){
 //            c.strokeStyle = 'green';
@@ -58,6 +97,13 @@ function drawStates(c, N, currentState, goalState){
     }
     c.fillStyle = 'black';
     c.fillText('Episode: '+total_episodes, 10, 10);
+    c.fillText('Epsilon: '+learner.epsilon, 10, 25);
+    if(learner.greedyActionTaken){
+        c.fillStyle = 'red';
+        c.textAlign = 'center';
+        c.fillText('GREEDY!', w/2, 25);
+    }
+
 
 }
 
@@ -101,31 +147,76 @@ function update() {
     debug();
 }
 
-function runQLearnerStepExploration(times) {
-    learner.greedy = false;
-    var success = learner.step(times);
-    console.log(learner.prevState, '-->', learner.state);
-    update();
-    if(success){
-        learner.randomState();
-    }
-}
-function runQLearnerStepExploitation(times) {
-    learner.greedy = true;
-    var success = learner.step(times);
-    console.log(learner.prevState, '-->', learner.state);
-    update();
-    if(success){
-        learner.randomState();
+var buttonTimeout = 1000;
+function setStepButtons(enable){
+    var disable = (enable)? false : true;
+    document.getElementById('step-explore').disabled = disable;
+    document.getElementById('step-exploit').disabled = disable;
+    document.getElementById('e-step').disabled = disable;
+
+    if(disable){
+        learner.prevState = undefined;
+        learner.greedyActionTaken = false;
     }
 }
 
+function runQLearnerStepExploration(times) {
+    learner.epsilon = 1;
+    var success = learner.step(times);
+    console.log(learner.prevState, '-->', learner.state);
+    update();
+
+    if(success){
+        setStepButtons(false);
+        learner.randomState();
+        setTimeout(function(){
+            update();
+            setStepButtons(true);
+        }, buttonTimeout);
+    }
+}
+function runQLearnerStepExploitation(times) {
+    learner.epsilon = 0;
+    var success = learner.step(times);
+    console.log(learner.prevState, '-->', learner.state);
+    update();
+
+    console.log(success);
+    if(success){
+        setStepButtons(false);
+        learner.randomState();
+        setTimeout(function(){
+            update();
+            setStepButtons(true);
+        }, buttonTimeout);
+    }
+}
+function runQLearnerStepEpsilon(times) {
+    learner.epsilon= +document.getElementById('epsilon').value;
+    var success = learner.step(times);
+    console.log(learner.prevState, '-->', learner.state);
+    update();
+
+    if(success){
+        setStepButtons(false);
+        learner.randomState();
+        setTimeout(function(){
+            update();
+            setStepButtons(true);
+        }, buttonTimeout);
+    }
+}
+
+function runQLearnerEpsilon(times) {
+    learner.epsilon= +document.getElementById('epsilon').value;
+    runQLearner(times);
+}
 function runQLearnerExploration(times) {
-    learner.greedy = false;
+    learner.epsilon = 1;
     runQLearner(times);
 }
 function runQLearnerGreedy(times) {
-    learner.greedy = true;
+    learner.epsilon = 0;
     runQLearner(times);
 }
 
