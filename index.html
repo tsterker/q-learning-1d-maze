@@ -64,21 +64,22 @@
         </script>
 
         <div id="content">
-            <!--<h1>TODO: make transition from epsilon=1 to epsilon=0</h1>-->
+            <h1>TODO: how to initialize and then decrease &#949;?</h1>
+            <h1>TODO: bug for &#949; values greedy vs explore?</h1>
             <canvas id="canvas" width="800" height="300"></canvas>
             <br>
 
-            States: <input type="number" id="num-of-states" min="1" max="50" step="1" value="5" style="width: 4em; text-align: center;" onchange="setNumberOfStates(+this.value)" />
+            States: <input type="number" id="num-of-states" min="1" max="50" step="1" value="10" style="width: 4em; text-align: center;" onchange="setNumberOfStates(+this.value)" />
             <br>
             Gamma: <input type="number" id="gamma" min="0" max="1" step="0.01" value="0.85" style="width: 4em; text-align: center;" onchange="learner.gamma = +this.value" />
             <br>
-            Episodes per run: <input type="number" id="episodes-per-run" min="1" value="5" style="width: 3em; text-align: center;" />
+            Episodes per run: <input type="number" id="episodes-per-run" min="1" value="10" style="width: 3em; text-align: center;" />
             <br>
             <button id="reset" onclick="resetLearner();">reset</button>
             <br>
             <table>
                 <tr>
-                    <td><b>Explore:</b> (&#949; = 0)</td>
+                    <td><b>Explore:</b> (&#949; = 1)</td>
                     <td>
                         <button id="step-explore" onclick="runQLearnerStepExploration();">step</button>
                     </td>
@@ -87,9 +88,9 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><b>Exploit:</b>(&#949; = 1)</td>
+                    <td><b>Exploit:</b>(&#949; = 0)</td>
                     <td>
-                        <button id="step-exploit" onclick="runQLearnerStepExploitation();">step</button>
+                        <button id="step-exploit" onclick="runQLearnerStepGreedy();">step</button>
                     </td>
                     <td>
                         <button id="run-exploit" onclick="runQLearnerGreedy();">run</button>
@@ -104,6 +105,20 @@
                     </td>
                     <td>
                         <button id="e-run" onclick="runQLearnerEpsilon();">run</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>varying &#949;-greedy:</b>
+                        (initial &#949; =  <input type="number" id="initial-epsilon" min="0" value="0.9" max="1" step="0.1" style="width: 3em; text-align: center;" />)
+                    </td>
+                    <td>
+                        <button id="e-step" onclick="runQLearnerStepDecreaseEpsilon();" disabled="disabled">step</button>
+                    </td>
+                    <td>
+                        <button id="e-run" onclick="runQLearnerDecreaseEpsilon();">run</button>
+                    </td>
+                    <td>
+                        <button id="e-continue" onclick="runQLearnerDecreaseEpsilon(true);">continue (with current epsilon)</button>
                     </td>
                 </tr>
             </table>

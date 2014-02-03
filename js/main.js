@@ -97,11 +97,16 @@ function drawStates(c, N, currentState, goalState){
     }
     c.fillStyle = 'black';
     c.fillText('Episode: '+total_episodes, 10, 10);
-    c.fillText('Epsilon: '+learner.epsilon, 10, 25);
+    c.fillText('Epsilon: '+learner.epsilon.toFixed(4), 10, 25);
+
+    c.textAlign = 'center';
     if(learner.greedyActionTaken){
         c.fillStyle = 'red';
         c.textAlign = 'center';
         c.fillText('GREEDY!', w/2, 25);
+    } else {
+        c.fillStyle = 'green';
+        c.fillText('EXPLORE!', w/2, 25);
     }
 
 
@@ -179,7 +184,7 @@ function runQLearnerStepExploration(times) {
         }, buttonTimeout);
     }
 }
-function runQLearnerStepExploitation(times) {
+function runQLearnerStepGreedy(times) {
     learner.epsilon = 0;
     var success = learner.step(times);
     console.log(learner.prevState, '-->', learner.state);
@@ -211,21 +216,26 @@ function runQLearnerStepEpsilon(times) {
     }
 }
 
-function runQLearnerEpsilon(times) {
+function runQLearnerEpsilon() {
     learner.epsilon= +document.getElementById('epsilon').value;
-    runQLearner(times);
+    runQLearner();
 }
-function runQLearnerExploration(times) {
+function runQLearnerExploration() {
     learner.epsilon = 1;
-    runQLearner(times);
+    runQLearner();
 }
-function runQLearnerGreedy(times) {
+function runQLearnerGreedy() {
     learner.epsilon = 0;
-    runQLearner(times);
+    runQLearner();
+}
+
+function runQLearnerDecreaseEpsilon(doContinue) {
+    learner.epsilon = doContinue? learner.epsilon : +document.getElementById('initial-epsilon').value;
+    runQLearner(0.9);
 }
 
 
-function runQLearner(times) {
+function runQLearner(epsilonChangeRate) {
     //learner.runEpisode(times || learner.N * learner.N, function(){
     setStepButtons(false);
     learner.runEpisodes({
@@ -241,6 +251,10 @@ function runQLearner(times) {
             //console.log('[ ===== GOAL ===== ] (', episodes, ')');
             console.log('[ ===== GOAL ===== ]');
             total_episodes++;
+            if(epsilonChangeRate){
+                learner.epsilon *= epsilonChangeRate;
+            }
+
             update();
             setStepButtons(false);      // basically: reset prevState and greedyActionTaken
             setTimeout(function(){
@@ -271,8 +285,8 @@ function setDelay(delay) {
 // ==================================================
 
 var learner = LearnTool.QLearner;
-learner.N = 5;
-learner.gamma = 0.8;
+learner.N = +document.getElementById('num-of-states').value || 5;
+learner.gamma = +document.getElementById('gamma').value || 0.9;
 document.getElementById('delay').value = document.getElementById('delay-current').innerHTML = learner.stepDelay = 300;
 
 // Visualization

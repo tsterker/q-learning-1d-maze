@@ -146,9 +146,11 @@
             var argmax;
 
             this.greedyActionTaken = false;
-            var takeGreedyAction = (Math.random() <= (1-this.epsilon));
+            //var takeGreedyAction = (Math.random() <= (1-this.epsilon));
+            //var takeGreedyAction = (Math.random() <= this.epsilon);
+            var doExplore = (Math.random() <= this.epsilon);
 
-            if(takeGreedyAction){
+            if(!doExplore){
                 // e-Greedy action; e = 0
                 // at = arg maxaQ (st , a)
                 argmax = argmaxQ_a(this.state);
@@ -162,7 +164,7 @@
                 }
             }
 
-            if(!takeGreedyAction || argmax.reward === 0){
+            if(doExplore || argmax.reward === 0){
                 // Exlploration:
                 // select one among all possible actions for the current state
                 this.action = randomAction();
